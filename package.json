@@ -31,7 +31,7 @@
 	"bin": {
 	    "i18n-translate": "cli.js"
 	},
-	"license": "MIT",
+	"license": "GPLv2",
 	"bugs": {
 		"url": "https://github.com/tomaszbrue/i18n-translate/issues"
 	},
