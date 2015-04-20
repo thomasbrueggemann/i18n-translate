@@ -1,0 +1,39 @@
+{
+	"name": "i18n-translate",
+	"description": "Automatically translates require.js i18n JSON files via Google Translate API",
+	"preferGlobal": "true",
+	"version": "1.0.0",
+	"private": false,
+	"author": "Thomas Brüggemann",
+	"dependencies": {
+		"async": "0.9.0",
+	},
+	"devDependencies": {
+		"mocha": "*",
+		"should": ">= 0.0.1",
+		"glob": "*"
+	},
+	"scripts": {
+		"test": "node_modules/.bin/mocha"
+	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/tomaszbrue/i18n-translate.git"
+	},
+	"keywords": [
+		"i18n",
+		"translate",
+		"google translate",
+		"internationalization",
+		"automation",
+		"build"
+	],
+	"bin": {
+	    "i18n-translate": "cli.js"
+	},
+	"license": "MIT",
+	"bugs": {
+		"url": "https://github.com/tomaszbrue/i18n-translate/issues"
+	},
+	"homepage": "https://github.com/tomaszbrue/i18n-translate"
+}
