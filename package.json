@@ -6,7 +6,8 @@
 	"private": false,
 	"author": "Thomas Brüggemann",
 	"dependencies": {
-		"async": "0.9.0"
+		"async": "0.9.0",
+		"traverse": "0.6.6"
 	},
 	"devDependencies": {
 		"mocha": "*",
