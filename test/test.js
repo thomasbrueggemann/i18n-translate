@@ -10,7 +10,7 @@ describe("i18n-translate ", function () {
 		return done();
 	});
 
-	it("should create a translation file for english (en)", function(done) {
+	it("should create a translation file for en,fr)", function(done) {
 
 		// run a translation batch
 		translate.run(null/*config.apiKey*/, "test/data/", "de", ["en", "fr"], function(err, result) {
@@ -18,7 +18,9 @@ describe("i18n-translate ", function () {
 			result.should.not.equal(null);
 			result.length.should.not.equal(0);
 
-			//console.log(result);
+			var merged = [];
+			merged = merged.concat.apply(merged, result[0]);
+			console.log(merged);
 			return done();
 		});
 	});

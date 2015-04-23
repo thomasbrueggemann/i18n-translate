@@ -114,6 +114,8 @@ var run = function(apiKey, dir, sourceLanguage, languages, finish) {
 							var e = null;
 							if(err === TRANSERR.NOT_TRANSLATED) {
 								e = {
+									"file": file,
+									"path": path,
 									"text": text,
 									"source": sourceLanguage,
 									"target": language
@@ -137,7 +139,7 @@ var run = function(apiKey, dir, sourceLanguage, languages, finish) {
 						transStr = "define(" + transStr + ");";
 						
 						var p = dir + t + "/" + file;
-						fs.writeFile(p, transStr, function() {});
+						fs.writeFileSync(p, transStr);
 
 						// add language to source file
 						parsed[t] = true;
@@ -148,11 +150,19 @@ var run = function(apiKey, dir, sourceLanguage, languages, finish) {
 					transStr = "define(" + transStr + ");";
 					
 					var p = dir + file;
-					fs.writeFile(p, transStr, function() {});
+					fs.writeFileSync(p, transStr);
 
 					// filter out null results, to just return the not translated ones
 					notTranslated = results.filter(function(item) {
-						return item != null;
+
+						// check if array only contains nulls
+						for(var i in item) {
+							if(item[i] != null) {
+								return true;
+							}
+						}
+
+						return false;
 					});
 
 					return callback(err, notTranslated);
