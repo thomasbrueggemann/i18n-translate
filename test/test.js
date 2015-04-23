@@ -1,7 +1,7 @@
 'use strict';
 
 var translate = require("../translate");
-var config    = require("./config");
+//var config    = require("./config");
 
 describe("i18n-translate ", function () {
 
