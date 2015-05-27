@@ -1,7 +1,7 @@
-var fs 			= require("fs");
-var async 		= require("async");
-var traverse 	= require("traverse");
-var google 		= require("google-translate");
+var fs = require("fs");
+var async = require("async");
+var traverse = require("traverse");
+var google = require("google-translate");
 
 var TRANSERR = {
 	NOT_TRANSLATED: 1,
@@ -11,38 +11,37 @@ var TRANSERR = {
 // RUN
 var run = function(apiKey, dir, sourceLanguage, languages, finish) {
 
-	google = google(apiKey);
+	var ggl = google(apiKey);
 
 	// TRANSLATE
 	var translate = function(text, language, callback) {
 
 		// passthrough if contains HTML
-		if(/<[a-z][\s\S]*>/i.test(text) == true) {
+		if (/<[a-z][\s\S]*>/i.test(text) == true) {
 			return callback(TRANSERR.NOT_TRANSLATED, text);
 		}
 
 		// it is just a url
-		if(text.indexOf("http://") == 0 && text.indexOf(" ") < 0) {
-			return callback(TRANSERR.IS_URL, text); 
+		if (text.indexOf("http://") == 0 && text.indexOf(" ") < 0) {
+			return callback(TRANSERR.IS_URL, text);
 		}
 
-		if(apiKey) {
+		if (apiKey) {
 
 			// fire the google translation
-			google.translate(text, sourceLanguage, language, function(err, translation) {
-			  	
-			  	if(err) {
-			  		return callback(TRANSERR.NOT_TRANSLATED, text);
-			  	}
+			ggl.translate(text, sourceLanguage, language, function(err, translation) {
 
-			  	// return the translated text
-			  	return callback(null, translation.translatedText);
+				if (err) {
+					return callback(TRANSERR.NOT_TRANSLATED, text);
+				}
+
+				// return the translated text
+				return callback(null, translation.translatedText);
 			});
-		}
-		else {
+		} else {
 
 			// bypass translation
-			return callback(null, text);	
+			return callback(null, text);
 		}
 	};
 
@@ -50,11 +49,16 @@ var run = function(apiKey, dir, sourceLanguage, languages, finish) {
 	var processFile = function(file, callback) {
 
 		// open file
-		fs.readFile(dir + file, function (err, data) {
-			
+		fs.readFile(dir + file, function(err, data) {
+
 			// bubble up error
-			if(err) return callback(err, null);
-			
+			if (err) {
+				return callback({
+					"file": file,
+					"error": err
+				}, null);
+			}
+
 			// replace define braces
 			data = data.toString();
 			data = data.replace("define({", "{");
@@ -63,28 +67,30 @@ var run = function(apiKey, dir, sourceLanguage, languages, finish) {
 			// try to parse remainder to JSON
 			var parsed;
 			try {
-				parsed = JSON.parse(data);	
-			}
-			catch(e) {
-				return callback(e, null);
+				parsed = JSON.parse(data);
+			} catch (e) {
+				return callback({
+					"file": file,
+					"error": e
+				}, null);
 			}
 
 			// check if file has root element
-			if("root" in parsed) {
+			if ("root" in parsed) {
 
 				var traversed = traverse(parsed["root"]);
 
 				// "deep clone" the root element into a target object
-				var targets = {}; 
+				var targets = {};
 
 				// create targets for every language
-				for(var l in languages) {
+				for (var l in languages) {
 					var lang = languages[l];
 					targets[lang] = traverse(traversed.clone());
 
 					// prepare output directories
 					var outDir = dir + lang + "/";
-					if(!fs.existsSync(outDir)) {
+					if (!fs.existsSync(outDir)) {
 						fs.mkdirSync(outDir);
 					}
 				}
@@ -95,81 +101,86 @@ var run = function(apiKey, dir, sourceLanguage, languages, finish) {
 				// translate each path
 				async.map(paths, function(path, done) {
 
-					var text = traversed.get(path);
+						var text = traversed.get(path);
 
-					// only continue for strings
-					if(typeof(text) !== "string") {
-						return done(null);
-					}
-
-					// translate every language for this path
-					async.map(languages, function(language, translated) {
-
-						// translate the text
-						translate(text, language, function(err, translation) {
-
-							// add new value to path
-							targets[language].set(path, translation);
-
-							var e = null;
-							if(err === TRANSERR.NOT_TRANSLATED) {
-								e = {
-									"file": file,
-									"path": path,
-									"text": text,
-									"source": sourceLanguage,
-									"target": language
-								};
-							}
-
-							return translated(null, e);
-						});
-
-					// all languages have been translated for this path,
-					// so call the done callback of the map through all paths
-					}, done);
-				}, 
-
-				// all are translated
-				function(err, results) {
-
-					// write translated targets to files
-					for(var t in targets) {
-						var transStr = JSON.stringify(targets[t].value, null, "\t");
-						transStr = "define(" + transStr + ");";
-						
-						var p = dir + t + "/" + file;
-						fs.writeFileSync(p, transStr);
-
-						// add language to source file
-						parsed[t] = true;
-					}
-
-					// prepare a new source file with appended languages
-					var transStr = JSON.stringify(parsed, null, "\t");
-					transStr = "define(" + transStr + ");";
-					
-					var p = dir + file;
-					fs.writeFileSync(p, transStr);
-
-					// filter out null results, to just return the not translated ones
-					notTranslated = results.filter(function(item) {
-
-						// check if array only contains nulls
-						for(var i in item) {
-							if(item[i] != null) {
-								return true;
-							}
+						// only continue for strings
+						if (typeof(text) !== "string") {
+							return done(null);
 						}
 
-						return false;
-					});
+						// translate every language for this path
+						async.map(languages, function(language, translated) {
 
-					return callback(err, notTranslated);
-				});
-			}
-			else {
-				return callback("no root element found", []);
+							// translate the text
+							translate(text, language, function(err, translation) {
+
+								// add new value to path
+								targets[language].set(path, translation);
+
+								var e = null;
+								if (err === TRANSERR.NOT_TRANSLATED) {
+									e = {
+										"file": file,
+										"path": path,
+										"text": text,
+										"source": sourceLanguage,
+										"target": language
+									};
+								}
+
+								return translated(null, e);
+							});
+
+							// all languages have been translated for this path,
+							// so call the done callback of the map through all paths
+						}, done);
+					},
+
+					// all are translated
+					function(err, results) {
+
+						// write translated targets to files
+						for (var t in targets) {
+							var transStr = JSON.stringify(targets[t].value, null, "\t");
+							transStr = "define(" + transStr + ");";
+
+							var p = dir + t + "/" + file;
+							fs.writeFileSync(p, transStr);
+
+							// add language to source file
+							parsed[t] = true;
+						}
+
+						// prepare a new source file with appended languages
+						var transStr = JSON.stringify(parsed, null, "\t");
+						transStr = "define(" + transStr + ");";
+
+						var p = dir + file;
+						fs.writeFileSync(p, transStr);
+
+						// filter out null results, to just return the not translated ones
+						notTranslated = results.filter(function(item)  {
+
+							// check if array only contains nulls
+							for (var i in item) {
+								if (item[i] != null) {
+									return true;
+								}
+							}
+
+							return false;
+						});
+
+						return callback({
+							"file": file,
+							"error": err
+						}, notTranslated);
+					});
+			} else {
+				return callback({
+					"file": file,
+					"error": "no root element found"
+				}, []);
 			}
 		});
 	};
@@ -178,7 +189,7 @@ var run = function(apiKey, dir, sourceLanguage, languages, finish) {
 	fs.readdir(dir, function(err, files) {
 
 		// could not read directory, bubble up error
-		if(err) return callback(err, null);
+		if (err) return callback(err, null);
 
 		// filter out all other files then .js
 		files = files.filter(function(file) {
