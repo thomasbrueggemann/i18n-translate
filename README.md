@@ -21,3 +21,5 @@ e.g.
 ```
 i18n-translate iuOHAEbo9H788d34h93h4diouehIUHI test/data/ de en,fr
 ```
+
+This would translate all the *.js files in test/data (relative to current folder in the shell) to translate from German to English and French, based on the Google Translate API language codes.
