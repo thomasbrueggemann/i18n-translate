@@ -171,6 +171,14 @@ var run = function(apiKey, dir, sourceLanguage, languages, finish) {
 							return false;
 						});
 
+						// spice up error message
+						if (err) {
+							err = {
+								"file": file,
+								"error": err
+							};
+						}
+
 						return callback(err, notTranslated);
 					});
 			} else {
