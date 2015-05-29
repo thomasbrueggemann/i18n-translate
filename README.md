@@ -1,4 +1,4 @@
-# i18n-translate [![Build Status](https://travis-ci.org/tomaszbrue/i18n-translate.svg)](https://travis-ci.org/tomaszbrue/i18n-translate) [![npm](https://img.shields.io/badge/npm-1.0.6-blue.svg)](https://www.npmjs.com/package/i18n-translate)
+# i18n-translate [![Build Status](https://travis-ci.org/tomaszbrue/i18n-translate.svg)](https://travis-ci.org/tomaszbrue/i18n-translate) [![npm](https://img.shields.io/badge/npm-1.0.7-blue.svg)](https://www.npmjs.com/package/i18n-translate)
 
 Automatically translates [require.js i18n](http://requirejs.org/docs/api.html#i18n) javascript files into different languages via Google Translate API.
 
