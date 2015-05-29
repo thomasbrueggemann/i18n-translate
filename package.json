@@ -2,7 +2,7 @@
 	"name": "i18n-translate",
 	"description": "Automatically translates require.js i18n JSON files via Google Translate API",
 	"preferGlobal": true,
-	"version": "1.0.5",
+	"version": "1.0.6",
 	"private": false,
 	"author": "Thomas Brüggemann",
 	"dependencies": {

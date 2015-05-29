@@ -171,10 +171,7 @@ var run = function(apiKey, dir, sourceLanguage, languages, finish) {
 							return false;
 						});
 
-						return callback({
-							"file": file,
-							"error": err
-						}, notTranslated);
+						return callback(err, notTranslated);
 					});
 			} else {
 				return callback({
