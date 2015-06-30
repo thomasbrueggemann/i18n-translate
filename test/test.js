@@ -17,7 +17,7 @@ describe("i18n-translate ", function() {
 	it("should create a translation file for en, fr", function(done) {
 
 		// run a translation batch
-		translate.run(config.apiKey, "test/data1/", "de", ["en", "fr"], function(err, result) {
+		translate.run(config.apiKey, "test/data1/", "de", ["en", "fr"], null, function(err, result) {
 
 			result.should.not.equal(null);
 			result.length.should.not.equal(0);
@@ -32,12 +32,23 @@ describe("i18n-translate ", function() {
 
 	it("should throw an error for malformed json", function(done) {
 
-		translate.run(config.apiKey, "test/data2/", "de", ["en"], function(err, result) {
+		translate.run(config.apiKey, "test/data2/", "de", ["en"], null, function(err, result) {
 
 			console.log("ERROR:");
 			console.log(err);
 
 			err.should.not.equal(null);
+			return done();
+		});
+
+	});
+
+	it("should only translate the test2.js file and leave the test.js file untranslated", function(done) {
+
+		translate.run(config.apiKey, "test/data3/", "de", ["en"], ["test2.js"], function(err, result) {
+
+			result.should.not.equal(null);
+			result.length.should.not.equal(0);
 			return done();
 		});
 

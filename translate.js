@@ -9,7 +9,7 @@ var TRANSERR = {
 };
 
 // RUN
-var run = function(apiKey, dir, sourceLanguage, languages, finish) {
+var run = function(apiKey, dir, sourceLanguage, languages, fileFilter, finish) {
 
 	var ggl = google(apiKey);
 
@@ -200,6 +200,15 @@ var run = function(apiKey, dir, sourceLanguage, languages, finish) {
 		files = files.filter(function(file) {
 			return file.indexOf(".js") > 0;
 		});
+
+		// a file filter is defined
+		if (fileFilter && fileFilter.length > 0) {
+
+			// filter out files by given file filter
+			files = files.filter(function(file) {
+				return fileFilter.indexOf(file) >= 0;
+			});
+		}
 
 		// process each file individually
 		async.map(files, processFile, finish);
