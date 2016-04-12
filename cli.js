@@ -24,8 +24,10 @@ for (var i = 0; i < targetLang.length; i++) {
 }
 
 // trim whitespaces for filefilter
-for (var i = 0; i < fileFilter.length; i++) {
-	fileFilter[i] = fileFilter[i].trim();
+if (fileFilter) {
+	for (var i = 0; i < fileFilter.length; i++) {
+		fileFilter[i] = fileFilter[i].trim();
+	}
 }
 
 // append / at the end of directory
